@@ -23,7 +23,7 @@ class ProjectController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:150',
             'description' => 'nullable|string',
-            'status' => 'required|in:planned,in_progress,completed,archived',
+            'status' => 'required|in:planned,in_progress,completed,blocked',
             'start_date' => 'required|date',
             'end_date' => 'nullable|date|after_or_equal:start_date'
         ]);

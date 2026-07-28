@@ -1,8 +1,8 @@
 FROM php:8.2-fpm
 
-# -------------------------------------------------------
-# System packages
-# -------------------------------------------------------
+# ==========================================
+# System dependencies
+# ==========================================
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -21,58 +21,56 @@ RUN apt-get update && apt-get install -y \
         pdo_pgsql \
         pgsql \
         mbstring \
+        bcmath \
         exif \
         pcntl \
-        bcmath \
         gd \
         zip \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# -------------------------------------------------------
+# ==========================================
 # Composer
-# -------------------------------------------------------
+# ==========================================
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
+# ==========================================
+# Working directory
+# ==========================================
 WORKDIR /var/www
 
-# -------------------------------------------------------
-# Copy project
-# -------------------------------------------------------
+# ==========================================
+# Install PHP dependencies
+# ==========================================
+COPY composer.json composer.lock ./
+
+RUN composer install \
+    --prefer-dist \
+    --no-interaction
+
+# ==========================================
+# Copy source code
+# ==========================================
 COPY . .
 
-# -------------------------------------------------------
-# Laravel directories
-# -------------------------------------------------------
+# ==========================================
+# Permissions
+# ==========================================
 RUN mkdir -p \
-    bootstrap/cache \
     storage/framework/cache/data \
     storage/framework/sessions \
     storage/framework/testing \
     storage/framework/views \
-    storage/logs
-
-RUN chown -R www-data:www-data \
-    storage \
+    storage/logs \
     bootstrap/cache
 
-RUN chmod -R 775 \
-    storage \
-    bootstrap/cache
+RUN chown -R www-data:www-data storage bootstrap/cache
 
-# -------------------------------------------------------
-# Composer
-# -------------------------------------------------------
-RUN composer install \
-    --prefer-dist \
-    --no-interaction \
-    --no-dev
+RUN chmod -R 775 storage bootstrap/cache
 
-# -------------------------------------------------------
-# Optimize
-# -------------------------------------------------------
-RUN composer dump-autoload --optimize
-
+# ==========================================
+# Expose PHP-FPM
+# ==========================================
 EXPOSE 9000
 
 CMD ["php-fpm"]

@@ -22,8 +22,8 @@ class TaskController extends Controller
             'project_id' => 'required|exists:projects,project_id',
             'title' => 'required|string|max:150',
             'description' => 'nullable|string',
-            'status' => 'required|in:planned,in_progress,completed,archived',
-            'priority' => 'required|in:low,medium,high,urgent',
+            'status' => 'required|in:to_do,in_progress,completed,blocked',
+            'priority' => 'required|in:low,medium,high,critical',
             'due_date' => 'nullable|date'
         ]);
 

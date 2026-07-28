@@ -5,11 +5,14 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\VerificationController;
+use App\Http\Controllers\ForgotPasswordController;
 
 // 1. AUTHENTICATION ROUTES (/api/auth/register, /api/auth/login, etc.)
 Route::group(['prefix' => 'auth'], function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
+    Route::post('/reset-password', [ForgotPasswordController::class, 'reset'])->name('password.reset');
 
     Route::middleware('auth:api')->group(function () {
         

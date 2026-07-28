@@ -9,25 +9,17 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
-    {
-        Schema::create('personal_access_tokens', function (Blueprint $table) {
-            $table->id();
-            $table->morphs('tokenable');
-            $table->text('name');
-            $table->string('token', 64)->unique();
-            $table->text('abilities')->nullable();
-            $table->timestamp('last_used_at')->nullable();
-            $table->timestamp('expires_at')->nullable()->index();
-            $table->timestamps();
-        });
-    }
+   public function up(): void
+{
+    Schema::table('tasks', function (Blueprint $table) {
+        $table->unsignedBigInteger('user_id')->after('project_id');
+    });
+}
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('personal_access_tokens');
-    }
+public function down(): void
+{
+    Schema::table('tasks', function (Blueprint $table) {
+        $table->dropColumn('user_id');
+    });
+}
 };

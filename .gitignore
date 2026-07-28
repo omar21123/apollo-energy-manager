@@ -1,3 +1,58 @@
-.env
-.env.*
-!.env.example
+# =====================
+# Environment
+# =====================
+**/.env
+**/.env.*
+!**/.env.example
+
+# =====================
+# Laravel Backend
+# =====================
+app/backend/vendor/
+app/backend/storage/logs/*
+!app/backend/storage/logs/.gitignore
+
+app/backend/storage/framework/cache/*
+!app/backend/storage/framework/cache/.gitignore
+
+app/backend/storage/framework/sessions/*
+!app/backend/storage/framework/sessions/.gitignore
+
+app/backend/storage/framework/testing/*
+!app/backend/storage/framework/testing/.gitignore
+
+app/backend/storage/framework/views/*
+!app/backend/storage/framework/views/.gitignore
+
+app/backend/storage/*.key
+
+# Swagger generated docs (optionnel)
+app/backend/storage/api-docs/api-docs.json
+
+# =====================
+# Frontend
+# =====================
+app/frontend/node_modules/
+app/frontend/dist/
+
+# =====================
+# IDE
+# =====================
+.vscode/
+.idea/
+
+# =====================
+# OS
+# =====================
+.DS_Store
+Thumbs.db
+
+# =====================
+# Logs
+# =====================
+*.log
+
+# =====================
+# Composer / NPM
+# =====================
+composer.phar

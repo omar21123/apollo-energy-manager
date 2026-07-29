@@ -2,23 +2,28 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail; // <-- Add this import
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
-class User extends Authenticatable implements JWTSubject, MustVerifyEmail // <-- Implement the contract
+class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 {
     use HasFactory, Notifiable, SoftDeletes;
 
     protected $primaryKey = 'user_id';
 
     protected $fillable = [
-        'name',
+        'first_name',
+        'last_name',
         'email',
         'password',
+        'phone',
+        'avatar_path',
+        'job_title',
+        'company',
         'account_status',
     ];
 
@@ -31,16 +36,30 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail // <--
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed', // Make sure this matches your Laravel setup, or remove it and use Hash::make() in your seeder/controller
+            'password' => 'hashed',
         ];
     }
 
+    /**
+     * Get the user's full name.
+     */
+    public function getFullNameAttribute(): string
+    {
+        return "{$this->first_name} {$this->last_name}";
+    }
+
+    /**
+     * JWT identifier.
+     */
     public function getJWTIdentifier()
     {
         return $this->getKey();
     }
 
-    public function getJWTCustomClaims()
+    /**
+     * JWT custom claims.
+     */
+    public function getJWTCustomClaims(): array
     {
         return [];
     }

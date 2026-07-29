@@ -13,16 +13,42 @@ return new class extends Migration
     {
         // 1. Users table
         Schema::create('users', function (Blueprint $table) {
-            $table->id('user_id');
-            $table->string('name', 100);
-            $table->string('email', 150)->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password', 255);
-            $table->rememberToken();
-            $table->enum('account_status', ['active', 'suspended', 'deleted'])->default('active');
-            $table->timestamps(); 
-            $table->softDeletes(); 
-        });
+        $table->id('user_id');
+
+        // Identity
+        $table->string('first_name', 100);
+        $table->string('last_name', 100);
+
+        // Authentication
+        $table->string('email', 150)->unique();
+        $table->timestamp('email_verified_at')->nullable();
+        $table->string('password', 255);
+        $table->rememberToken();
+
+        // Profile
+        $table->string('phone', 20)->nullable();
+        $table->string('avatar_path')->nullable();
+        $table->string('job_title', 100)->nullable();
+        $table->string('company', 150)->nullable();
+
+        // Preferences
+        $table->string('locale', 10)->default('en');
+        $table->string('timezone', 50)->default('UTC');
+
+        // Account
+        $table->enum('account_status', [
+            'active',
+            'suspended',
+            'deleted'
+        ])->default('active');
+
+        // Security
+        $table->timestamp('last_login_at')->nullable();
+        $table->string('last_login_ip', 45)->nullable();
+
+        $table->timestamps();
+        $table->softDeletes();
+});
 
         // 2. Default table Laravel needs for password resets
         Schema::create('password_reset_tokens', function (Blueprint $table) {

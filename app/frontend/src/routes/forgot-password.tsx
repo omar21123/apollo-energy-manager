@@ -24,9 +24,21 @@ function ForgotPage() {
   const onSubmit = async (values: Values) => {
     try {
       await api.post("/auth/forgot-password", values);
-      navigate({ to: "/forgot-password/sent" });
+
+      toast.success(
+        "Password reset link sent! Please check your email inbox."
+      );
+
+      navigate({
+        to: "/login",
+        search: {
+          verified: "reset-sent",
+        },
+      });
     } catch (err) {
-      if (!applyValidationErrors(err, form.setError)) toast.error(extractErrorMessage(err));
+      if (!applyValidationErrors(err, form.setError)) {
+        toast.error(extractErrorMessage(err));
+      }
     }
   };
 
@@ -38,7 +50,9 @@ function ForgotPage() {
           <Input id="email" type="email" {...form.register("email")} />
           {form.formState.errors.email && <p className="mt-1 text-xs text-destructive">{form.formState.errors.email.message}</p>}
         </div>
-        <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>Send reset link</Button>
+        <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+          {form.formState.isSubmitting ? "Sending…" : "Send reset link"}
+        </Button>
       </form>
       <p className="mt-6 text-center text-sm text-muted-foreground">
         <Link to="/login" className="text-primary hover:underline">Back to sign in</Link>

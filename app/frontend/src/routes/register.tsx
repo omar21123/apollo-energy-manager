@@ -32,9 +32,21 @@ function RegisterPage() {
   const onSubmit = async (values: Values) => {
     try {
       await api.post("/auth/register", values);
-      navigate({ to: "/register/check-email", search: { email: values.email } });
+
+      toast.success(
+        "Account created successfully! Please check your email to verify your account."
+      );
+
+      navigate({
+        to: "/login",
+        search: {
+          verified: "pending",
+        },
+      });
     } catch (err) {
-      if (!applyValidationErrors(err, form.setError)) toast.error(extractErrorMessage(err));
+      if (!applyValidationErrors(err, form.setError)) {
+        toast.error(extractErrorMessage(err));
+      }
     }
   };
 

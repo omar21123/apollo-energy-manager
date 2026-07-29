@@ -60,7 +60,7 @@ class TaskController extends Controller
     public function show($id)
     {
         $task = Task::with(['project', 'user'])
-                    ->where('id', $id)
+                    ->where('task_id', $id)
                     ->where('user_id', auth()->id())
                     ->first();
 
@@ -74,7 +74,7 @@ class TaskController extends Controller
     // 4. Update a task only if it belongs to the authenticated user
     public function update(Request $request, $id)
     {
-        $task = Task::where('id', $id)
+        $task = Task::where('task_id', $id)
                     ->where('user_id', auth()->id())
                     ->first();
 

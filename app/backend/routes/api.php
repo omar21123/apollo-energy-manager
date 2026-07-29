@@ -7,16 +7,26 @@ use App\Http\Controllers\TaskController;
 use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\ForgotPasswordController;
 
-// 1. AUTHENTICATION ROUTES (/api/auth/register, /api/auth/login, etc.)
-Route::group(['prefix' => 'auth'], function () {
-    Route::post('/register', [AuthController::class, 'register']);
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
-    Route::post('/reset-password', [ForgotPasswordController::class, 'reset'])->name('password.reset');
+Route::prefix('auth')->group(function () {
 
-    Route::middleware('auth:api')->group(function () {
-        
-        // Email Verification Request Route
+    // Public authentication routes
+    Route::post('/register', [AuthController::class, 'register'])
+        ->middleware('throttle:register');
+
+    Route::post('/login', [AuthController::class, 'login'])
+        ->middleware('throttle:login');
+
+    Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])
+        ->middleware('throttle:password-reset');
+
+    Route::post('/reset-password', [ForgotPasswordController::class, 'reset'])
+        ->middleware('throttle:password-reset');
+
+    Route::get('/reset-password/validate', [ForgotPasswordController::class, 'validateToken'])
+        ->middleware('throttle:password-reset');
+
+    // Protected authentication routes
+    Route::middleware(['auth:api', 'throttle:api'])->group(function () {
         Route::post('/email/verify', [VerificationController::class, 'sendVerificationEmail']);
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::get('/me', [AuthController::class, 'me']);
@@ -25,12 +35,13 @@ Route::group(['prefix' => 'auth'], function () {
     });
 });
 
-// 2. PUBLIC EMAIL VERIFICATION CONFIRMATION ROUTE
+// Public email verification
 Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'])
+    ->middleware('throttle:api')
     ->name('verification.verify');
 
-// 3. PROTECTED API RESOURCES (Requires valid JWT token)
-Route::middleware('auth:api')->group(function () {
+// Protected resources
+Route::middleware(['auth:api', 'throttle:api'])->group(function () {
     Route::apiResource('projects', ProjectController::class);
     Route::apiResource('tasks', TaskController::class);
 });

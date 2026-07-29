@@ -8,16 +8,14 @@ use Illuminate\Support\Facades\Validator;
 
 class ProjectController extends Controller
 {
-    // 1. List all projects
+    // 1. List only projects belonging to the authenticated user
     public function index()
     {
-        $projects = Project::all();
+        $projects = Project::where('user_id', auth()->id())->get();
         return response()->json($projects);
     }
 
-
-
-    // 2. Create a new project
+    // 2. Create a new project (already attaches user_id)
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -43,10 +41,13 @@ class ProjectController extends Controller
 
         return response()->json($project, 201);
     }
-    // 3. Show one specific project
+
+    // 3. Show one specific project only if it belongs to the authenticated user
     public function show($id)
     {
-        $project = Project::find($id);
+        $project = Project::where('project_id', $id)
+                          ->where('user_id', auth()->id())
+                          ->first();
         
         if (!$project) {
             return response()->json(['error' => 'Project not found'], 404);
@@ -55,10 +56,12 @@ class ProjectController extends Controller
         return response()->json($project);
     }
 
-    // 4. Update a project
+    // 4. Update a project only if it belongs to the authenticated user
     public function update(Request $request, $id)
     {
-        $project = Project::find($id);
+        $project = Project::where('project_id', $id)
+                          ->where('user_id', auth()->id())
+                          ->first();
         
         if (!$project) {
             return response()->json(['error' => 'Project not found'], 404);
@@ -68,10 +71,12 @@ class ProjectController extends Controller
         return response()->json($project);
     }
 
-    // 5. Delete a project
+    // 5. Delete a project only if it belongs to the authenticated user
     public function destroy($id)
     {
-        $project = Project::find($id);
+        $project = Project::where('project_id', $id)
+                          ->where('user_id', auth()->id())
+                          ->first();
         
         if (!$project) {
             return response()->json(['error' => 'Project not found'], 404);

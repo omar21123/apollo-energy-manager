@@ -123,4 +123,7 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+
+    'frontend_url' => env('FRONTEND_URL', 'http://172.22.0.4:8080'),
+
 ];

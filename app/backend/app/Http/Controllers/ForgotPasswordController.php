@@ -6,6 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
+
 
 class ForgotPasswordController extends Controller
 {
@@ -56,5 +60,35 @@ class ForgotPasswordController extends Controller
             : throw ValidationException::withMessages([
                 'email' => [__( $status )],
             ]);
+    }
+
+    public function validateToken(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'token' => 'required',
+        ]);
+
+        $record = DB::table('password_reset_tokens')
+            ->where('email', $request->email)
+            ->first();
+
+        if (! $record) {
+            return response()->json([
+                'valid' => false,
+                'message' => 'Invalid reset link.',
+            ], 404);
+        }
+
+        if (! Hash::check($request->token, $record->token)) {
+            return response()->json([
+                'valid' => false,
+                'message' => 'Invalid reset link.',
+            ], 400);
+        }
+
+        return response()->json([
+            'valid' => true,
+        ]);
     }
 }

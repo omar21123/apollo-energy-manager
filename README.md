@@ -11,7 +11,7 @@ A full-stack web application for **Apollo Green Solutions** to manage and monito
 
 ## Demo
 
-https://c3rb3rus.dev/assets/img/posts/apollo-energy-manager/demo.mp4
+https://omar21123.github.io/assets/img/posts/apollo-energy-manager/demo.mp4
 
 > A short walkthrough of the dashboard, project/task management, and the drag-and-drop Kanban board.
 
